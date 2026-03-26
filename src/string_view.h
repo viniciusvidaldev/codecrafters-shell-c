@@ -11,6 +11,17 @@ typedef struct {
     size_t len;
 } String_View;
 
+#define SV_Fmt "%.*s"
+#define SV_Arg(s) (int)(s).len, (s).data
+#define sv_to_cstr(s)                                                                              \
+    ({                                                                                             \
+        String_View _s = (s);                                                                      \
+        char *_buf = alloca(_s.len + 1);                                                           \
+        memcpy(_buf, _s.data, _s.len);                                                             \
+        _buf[_s.len] = '\0';                                                                       \
+        _buf;                                                                                      \
+    })
+
 String_View sv_from(const char *cstr);
 String_View sv_from_parts(const char *data, size_t len);
 void sv_chop_left(String_View *sv, size_t n);
