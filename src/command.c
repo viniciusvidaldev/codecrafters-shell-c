@@ -1,5 +1,6 @@
 #include "command.h"
 #include "string_view.h"
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -9,6 +10,8 @@
 #else
 #include <sys/syslimits.h>
 #endif /* ifdef unix */
+
+#define PATH_SEP ':'
 
 void cmd_type(String_View args);
 void cmd_exit(String_View args) { exit(0); };
@@ -41,6 +44,25 @@ static const Command *find_cmd(String_View name) {
     return NULL;
 }
 
+bool find_external_path(String_View bin_name, char *out, size_t out_len) {
+    const char *path_env = getenv("PATH");
+    if (path_env == NULL) {
+        return false;
+    }
+
+    String_View sv = sv_from(path_env);
+    while (sv.len > 0) {
+        String_View dir = sv_chop_by_delim(&sv, PATH_SEP);
+        snprintf(out, out_len, SV_FMT "/" SV_FMT, SV_ARG(dir), SV_ARG(bin_name));
+
+        if (access(out, X_OK) == 0) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 void cmd_type(String_View args) {
     const Command *builtin_cmd = find_cmd(args);
     if (builtin_cmd) {
@@ -48,7 +70,11 @@ void cmd_type(String_View args) {
         return;
     }
 
-    printf(SV_FMT ": not found\n", SV_ARG(args));
+    char buf[PATH_MAX];
+    if (find_external_path(args, buf, sizeof(buf))) {
+        printf(SV_FMT " is %s\n", SV_ARG(args), buf);
+        return;
+    }
 }
 
 void command_dispatch(String_View cmd, String_View args) {

@@ -3,6 +3,7 @@
 
 #include <ctype.h>
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -24,6 +25,7 @@ typedef struct {
 
 String_View sv_from(const char *cstr);
 String_View sv_from_parts(const char *data, size_t len);
+size_t sv_find(String_View sv, char c);
 void sv_chop_left(String_View *sv, size_t n);
 void sv_chop_right(String_View *sv, size_t n);
 void sv_trim_left(String_View *sv);
@@ -41,6 +43,11 @@ String_View sv_from(const char *cstr) { return (String_View){.data = cstr, .len 
 
 String_View sv_from_parts(const char *data, size_t len) {
     return (String_View){.data = data, .len = len};
+}
+
+size_t sv_find(String_View sv, char c) {
+    char *p = memchr(sv.data, c, sv.len);
+    return p ? (size_t)(p - sv.data) : sv.len;
 }
 
 void sv_chop_left(String_View *sv, size_t n) {
@@ -74,24 +81,14 @@ void sv_trim(String_View *sv) {
 }
 
 String_View sv_chop_by_delim(String_View *sv, char delim) {
-    size_t i = 0;
-    while (i < sv->len && sv->data[i] != delim) {
-        i++;
-    }
+    size_t i = sv_find(*sv, delim);
     String_View result = sv_from_parts(sv->data, i);
-    if (i < sv->len) {
-        sv_chop_left(sv, i + 1); // skip the delimiter
-    } else {
-        sv_chop_left(sv, sv->len);
-    }
+    sv_chop_left(sv, i < sv->len ? i + 1 : sv->len);
     return result;
 }
 
 String_View sv_substring_by_delim(String_View *sv, char delim) {
-    size_t i = 0;
-    while (i < sv->len && sv->data[i] != delim) {
-        i++;
-    }
+    size_t i = sv_find(*sv, delim);
     return sv_from_parts(sv->data, i);
 }
 
