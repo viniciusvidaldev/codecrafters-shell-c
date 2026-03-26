@@ -11,8 +11,8 @@ typedef struct {
     size_t len;
 } String_View;
 
-#define SV_Fmt "%.*s"
-#define SV_Arg(s) (int)(s).len, (s).data
+#define SV_FMT "%.*s"
+#define SV_ARG(s) (int)(s).len, (s).data
 #define sv_to_cstr(s)                                                                              \
     ({                                                                                             \
         String_View _s = (s);                                                                      \
