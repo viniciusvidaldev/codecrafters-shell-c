@@ -75,6 +75,8 @@ void cmd_type(String_View args) {
         printf(SV_FMT " is %s\n", SV_ARG(args), buf);
         return;
     }
+
+    printf(SV_FMT ": not found", SV_ARG(args));
 }
 
 void command_dispatch(String_View cmd, String_View args) {
