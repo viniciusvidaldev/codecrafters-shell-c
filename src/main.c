@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
         // };
 
         // printf("%s\n", cwd);
-        printf("λ ");
+        printf("$ ");
         char buf[BUF_SIZE];
         if (fgets(buf, sizeof(buf), stdin) == NULL) {
             if (feof(stdin)) {
