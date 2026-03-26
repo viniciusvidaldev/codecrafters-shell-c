@@ -38,8 +38,8 @@ int main(int argc, char *argv[]) {
         }
         buf[strcspn(buf, "\n")] = '\0';
 
-        String_View cmd = sv_from(buf);
-        String_View args = sv_chop_by_delim(&cmd, ' ');
+        String_View args = sv_from(buf);
+        String_View cmd = sv_chop_by_delim(&args, ' ');
         if (sv_eq(cmd, sv_from("exit"))) {
             return 0;
         }
