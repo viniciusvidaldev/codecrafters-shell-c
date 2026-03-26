@@ -63,6 +63,14 @@ bool find_external_path(String_View bin_name, char *out, size_t out_len) {
     return false;
 }
 
+void exec_external_path(String_View args) {
+    char buf[PATH_MAX];
+    if (find_external_path(args, buf, sizeof(buf))) {
+        printf(SV_FMT " is %s\n", SV_ARG(args), buf);
+        return;
+    }
+}
+
 void cmd_type(String_View args) {
     const Command *builtin_cmd = find_cmd(args);
     if (builtin_cmd) {
