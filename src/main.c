@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
         }
         buf[strcspn(buf, "\n")] = '\0';
 
-        printf("%s: command not found\n\n", buf);
+        printf("%s: command not found\n", buf);
     }
 
     return 0;
