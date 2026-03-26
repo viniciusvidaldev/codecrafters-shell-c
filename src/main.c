@@ -39,12 +39,13 @@ int main(int argc, char *argv[]) {
         buf[strcspn(buf, "\n")] = '\0';
 
         String_View cmd = sv_from(buf);
+        String_View args = sv_chop_by_delim(&cmd, ' ');
         if (sv_eq(cmd, sv_from("exit"))) {
             return 0;
         }
 
         if (sv_eq(cmd, sv_from("echo"))) {
-            sv_println(cmd);
+            sv_println(args);
             continue;
         }
 
