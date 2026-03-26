@@ -16,12 +16,12 @@ int main(int argc, char *argv[]) {
     setbuf(stdout, NULL);
 
     while (1) {
-        char cwd[PATH_MAX];
-        if (getcwd(cwd, sizeof(cwd)) == NULL) {
-            perror("getcwd");
-        };
+        // char cwd[PATH_MAX];
+        // if (getcwd(cwd, sizeof(cwd)) == NULL) {
+        //     perror("getcwd");
+        // };
 
-        printf("%s\n", cwd);
+        // printf("%s\n", cwd);
         printf("λ ");
         char buf[BUF_SIZE];
         if (fgets(buf, sizeof(buf), stdin) == NULL) {
