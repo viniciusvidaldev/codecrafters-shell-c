@@ -43,6 +43,11 @@ int main(int argc, char *argv[]) {
             return 0;
         }
 
+        if (sv_eq(cmd, sv_from("echo"))) {
+            sv_println(cmd);
+            continue;
+        }
+
         printf("%s: command not found\n", buf);
     }
 
