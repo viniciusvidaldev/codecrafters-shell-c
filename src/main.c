@@ -1,8 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/syslimits.h>
 #include <unistd.h>
+
+#ifdef unix
+#include <linux/limits.h>
+#else
+#include <sys/syslimits.h>
+#endif /* ifdef unix */
 
 #define BUF_SIZE 256
 
