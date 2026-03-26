@@ -1,0 +1,102 @@
+#ifndef SV_H
+#define SV_H
+
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <string.h>
+
+typedef struct {
+    const char *data;
+    size_t len;
+} String_View;
+
+String_View sv_from(const char *cstr);
+String_View sv_from_parts(const char *data, size_t len);
+void sv_chop_left(String_View *sv, size_t n);
+void sv_chop_right(String_View *sv, size_t n);
+void sv_trim_left(String_View *sv);
+void sv_trim_right(String_View *sv);
+void sv_trim(String_View *sv);
+String_View sv_chop_by_delim(String_View *sv, char delim);
+String_View sv_substring_by_delim(String_View *sv, char delim);
+bool sv_eq(String_View a, String_View b);
+bool sv_starts_with(String_View sv, String_View prefix);
+void sv_println(String_View sv);
+
+#ifdef SV_IMPLEMENTATION
+
+String_View sv_from(const char *cstr) { return (String_View){.data = cstr, .len = strlen(cstr)}; }
+
+String_View sv_from_parts(const char *data, size_t len) {
+    return (String_View){.data = data, .len = len};
+}
+
+void sv_chop_left(String_View *sv, size_t n) {
+    if (n > sv->len)
+        n = sv->len;
+    sv->data += n;
+    sv->len -= n;
+}
+
+void sv_chop_right(String_View *sv, size_t n) {
+    if (n > sv->len)
+        n = sv->len;
+    sv->len -= n;
+}
+
+void sv_trim_left(String_View *sv) {
+    while (sv->len > 0 && isspace((unsigned char)sv->data[0])) {
+        sv_chop_left(sv, 1);
+    }
+}
+
+void sv_trim_right(String_View *sv) {
+    while (sv->len > 0 && isspace((unsigned char)sv->data[sv->len - 1])) {
+        sv_chop_right(sv, 1);
+    }
+}
+
+void sv_trim(String_View *sv) {
+    sv_trim_left(sv);
+    sv_trim_right(sv);
+}
+
+String_View sv_chop_by_delim(String_View *sv, char delim) {
+    size_t i = 0;
+    while (i < sv->len && sv->data[i] != delim) {
+        i++;
+    }
+    String_View result = sv_from_parts(sv->data, i);
+    if (i < sv->len) {
+        sv_chop_left(sv, i + 1); // skip the delimiter
+    } else {
+        sv_chop_left(sv, sv->len);
+    }
+    return result;
+}
+
+String_View sv_substring_by_delim(String_View *sv, char delim) {
+    size_t i = 0;
+    while (i < sv->len && sv->data[i] != delim) {
+        i++;
+    }
+    return sv_from_parts(sv->data, i);
+}
+
+bool sv_eq(String_View a, String_View b) {
+    if (a.len != b.len)
+        return false;
+    return memcmp(a.data, b.data, a.len) == 0;
+}
+
+bool sv_starts_with(String_View sv, String_View prefix) {
+    if (prefix.len > sv.len)
+        return false;
+    return sv_eq(sv_from_parts(sv.data, prefix.len), prefix);
+}
+
+void sv_println(String_View sv) { printf("%.*s\n", (int)sv.len, sv.data); }
+
+#endif // SV_IMPLEMENTATION
+#endif // SV_H

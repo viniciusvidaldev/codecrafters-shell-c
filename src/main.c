@@ -1,3 +1,6 @@
+#define SV_IMPLEMENTATION
+#include "string_view.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -34,6 +37,11 @@ int main(int argc, char *argv[]) {
             return EXIT_FAILURE;
         }
         buf[strcspn(buf, "\n")] = '\0';
+
+        String_View cmd = sv_from(buf);
+        if (sv_eq(cmd, sv_from("exit"))) {
+            return 0;
+        }
 
         printf("%s: command not found\n", buf);
     }
