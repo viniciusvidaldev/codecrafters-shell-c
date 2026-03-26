@@ -51,6 +51,7 @@ bool find_external_path(String_View bin_name, char *out, size_t out_len) {
     }
 
     String_View sv = sv_from(path_env);
+
     while (sv.len > 0) {
         String_View dir = sv_chop_by_delim(&sv, PATH_SEP);
         snprintf(out, out_len, SV_FMT "/" SV_FMT, SV_ARG(dir), SV_ARG(bin_name));
@@ -63,10 +64,34 @@ bool find_external_path(String_View bin_name, char *out, size_t out_len) {
     return false;
 }
 
-void exec_external_path(String_View args) {
-    char buf[PATH_MAX];
-    if (find_external_path(args, buf, sizeof(buf))) {
-        printf(SV_FMT " is %s\n", SV_ARG(args), buf);
+void exec_external_path(String_View bin_name, String_View args) {
+    pid_t pid = fork();
+
+    if (pid < 0) {
+        printf(SV_FMT ": error trying to execute bin\n", SV_ARG(args));
+        return;
+    }
+
+    if (pid == 0) {
+        char *bin_name_cstr = sv_to_cstr(bin_name);
+
+        char *argv[64] = {0};
+        size_t argc = 0;
+        argv[argc++] = bin_name_cstr;
+        while (args.len > 0) {
+            String_View token = sv_chop_by_delim(&args, ' ');
+            if (token.len == 0)
+                continue;
+            argv[argc++] = sv_to_cstr(token);
+        }
+
+        execvp(sv_to_cstr(bin_name), argv);
+        perror(sv_to_cstr(bin_name));
+        exit(127);
+    }
+
+    if (waitpid(pid, NULL, 0) < 0) {
+        printf(SV_FMT ": error trying to execute bin\n", SV_ARG(args));
         return;
     }
 }
@@ -92,6 +117,12 @@ void command_dispatch(String_View cmd, String_View args) {
 
     if (builtin_cmd) {
         builtin_cmd->handler(args);
+        return;
+    }
+
+    char buf[PATH_MAX];
+    if (find_external_path(cmd, buf, sizeof(buf))) {
+        exec_external_path(cmd, args);
         return;
     }
 
