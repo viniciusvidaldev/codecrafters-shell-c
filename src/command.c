@@ -40,7 +40,7 @@ void cmd_cd(String_View args) {
         path = sv_to_cstr(args);
     }
 
-    if (chdir(sv_to_cstr(args)) != 0) {
+    if (chdir(path) != 0) {
         switch (errno) {
         case ENOENT:
             fprintf(stderr, "cd: no such file or directory: %s\n", path);
