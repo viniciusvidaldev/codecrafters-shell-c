@@ -8,18 +8,20 @@
 #include <string.h>
 #include <unistd.h>
 
-void builtin_type(char **argv, int argc);
+static void builtin_type(char **argv, int argc);
 
-void builtin_exit(char **argv, int argc) { exit(0); }
+static void builtin_exit(char **argv, int argc) { exit(0); }
 
-void builtin_echo(char **argv, int argc) {
+static void builtin_echo(char **argv, int argc) {
     for (int i = 1; i < argc; i++) {
+        if (i > 1)
+            printf(" ");
         printf("%s", argv[i]);
     }
     printf("\n");
 }
 
-void builtin_pwd(char **argv, int argc) {
+static void builtin_pwd(char **argv, int argc) {
     char cwd[PATH_MAX];
     if (getcwd(cwd, sizeof(cwd)) == NULL) {
         perror("getcwd");
@@ -28,7 +30,7 @@ void builtin_pwd(char **argv, int argc) {
     printf("%s\n", cwd);
 }
 
-void builtin_cd(char **argv, int argc) {
+static void builtin_cd(char **argv, int argc) {
     const char *path;
     if (argc < 2 || strcmp(argv[1], "~") == 0) {
         path = getenv("HOME");
@@ -64,7 +66,7 @@ static const Command commands[] = {
 
 static const size_t commands_len = sizeof(commands) / sizeof(commands[0]);
 
-static const Command *find_builtin(const char *name) {
+const Command *find_builtin(const char *name) {
     for (size_t i = 0; i < commands_len; i++) {
         if (strcmp(name, commands[i].name) == 0) {
             return &commands[i];
@@ -73,7 +75,7 @@ static const Command *find_builtin(const char *name) {
     return NULL;
 }
 
-void builtin_type(char **argv, int argc) {
+static void builtin_type(char **argv, int argc) {
     if (argc < 2) {
         fprintf(stderr, "type: missing argument\n");
         return;

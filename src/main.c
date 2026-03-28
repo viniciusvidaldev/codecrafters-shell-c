@@ -1,14 +1,14 @@
+#include "parse.h"
 #define SV_IMPLEMENTATION
-#include "string_view.h"
 
 #include "command.h"
 
-#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #define BUF_SIZE 256
+#define MAX_ARGS 4096
 
 int main(int argc, char *argv[]) {
     // Flush after every printf
@@ -28,17 +28,11 @@ int main(int argc, char *argv[]) {
         }
         buf[strcspn(buf, "\n")] = '\0';
 
-        String_View input = sv_from(buf);
+        char token_storage[BUF_SIZE];
+        char *cmd_argv[MAX_ARGS];
 
-        char *argv[ARG_MAX];
-        size_t argc = 0;
-        while (input.len > 0) {
-            sv_trim(&input);
-            String_View token = sv_chop_by_delim(&input, ' ');
-            argv[argc++] = sv_to_cstr(token);
-        }
-
-        command_dispatch(argv, argc);
+        size_t cmd_argc = parse_args(buf, token_storage, cmd_argv);
+        command_dispatch(cmd_argv, cmd_argc);
     }
 
     return 0;
