@@ -34,6 +34,7 @@ void cmd_cd(String_View args) {
         path = getenv("HOME");
         if (path == NULL) {
             fprintf(stderr, "cd: HOME not set\n");
+            return;
         }
     } else {
         path = sv_to_cstr(args);
