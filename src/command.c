@@ -1,5 +1,6 @@
 #include "command.h"
 #include "string_view.h"
+#include <csetjmp>
 #include <errno.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -28,7 +29,17 @@ void cmd_pwd(String_View args) {
 };
 
 void cmd_cd(String_View args) {
-    char *path = sv_to_cstr(args);
+    const char *path;
+
+    if (args.len == 0) {
+        const char *home_env = getenv("HOME");
+        if (home_env == NULL) {
+            fprintf(stderr, "cd: HOME not set\n");
+        }
+    } else {
+        path = sv_to_cstr(args);
+    }
+
     if (chdir(sv_to_cstr(args)) != 0) {
         switch (errno) {
         case ENOENT:
