@@ -1,3 +1,6 @@
+#include <stdbool.h>
+#include <stddef.h>
+
 size_t parse_args(const char *input, char *storage, char **argv) {
     size_t argc = 0;
     size_t storage_offset = 0;
