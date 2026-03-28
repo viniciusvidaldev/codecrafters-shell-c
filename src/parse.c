@@ -25,7 +25,7 @@ size_t parse_args(const char *input, char *storage, char **argv) {
         if (c == '\\') {
             char next_c = c++;
             if (next_c == '\'' || next_c == '\"') {
-                storage[storage_offset + token_len++] = c;
+                storage[storage_offset + token_len++] = next_c;
                 continue;
             }
         }
