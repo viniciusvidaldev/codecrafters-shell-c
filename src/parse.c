@@ -24,18 +24,14 @@ size_t parse_args(const char *input, char *storage, char **argv) {
 
         bool in_quotes = in_single_quotes || in_double_quotes;
 
-        if (!in_quotes && isspace(c)) {
-            if (token_len > 0) {
-                storage[storage_offset + token_len] = '\0';
-                argv[argc++] = &storage[storage_offset];
-                storage_offset += token_len + 1;
-                token_len = 0;
-            }
-            continue;
+        if (in_quotes || !isspace(c)) {
+            storage[storage_offset + token_len++] = c;
+        } else if (token_len > 0) {
+            storage[storage_offset + token_len] = '\0';
+            argv[argc++] = &storage[storage_offset];
+            storage_offset += token_len + 1;
+            token_len = 0;
         }
-
-        storage[storage_offset + token_len] = c;
-        token_len++;
     }
 
     if (token_len > 0) {
