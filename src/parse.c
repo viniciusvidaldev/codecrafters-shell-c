@@ -6,7 +6,8 @@ size_t parse_args(const char *input, char *storage, char **argv) {
     size_t argc = 0;
     size_t storage_offset = 0;
     size_t token_len = 0;
-    bool in_quotes = false;
+    bool in_single_quotes = false;
+    bool in_double_quotes = false;
 
     for (const char *p = input; *p != '\0'; p++) {
         char c = *p;
