@@ -1,6 +1,5 @@
 #include "command.h"
 #include "string_view.h"
-#include <csetjmp>
 #include <errno.h>
 #include <stdbool.h>
 #include <stdio.h>
