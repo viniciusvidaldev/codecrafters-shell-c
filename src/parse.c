@@ -12,9 +12,6 @@ size_t parse_args(const char *input, char *storage, char **argv) {
     for (const char *p = input; *p != '\0'; p++) {
         char c = *p;
 
-        bool in_single_quotes = false;
-        bool in_double_quotes = false;
-
         if (c == '\'') {
             in_single_quotes = !in_single_quotes;
             continue;
