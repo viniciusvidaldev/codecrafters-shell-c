@@ -1,5 +1,6 @@
 #include "command.h"
 #include "string_view.h"
+#include <errno.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -27,9 +28,22 @@ void cmd_pwd(String_View args) {
 };
 
 void cmd_cd(String_View args) {
-    char cwd[PATH_MAX];
+    char *path = sv_to_cstr(args);
     if (chdir(sv_to_cstr(args)) != 0) {
-        perror("chdir");
+        switch (errno) {
+        case ENOENT:
+            fprintf(stderr, "cd: no such file or directory: %s\n", path);
+            break;
+        case ENOTDIR:
+            fprintf(stderr, "cd: not a directory: %s\n", path);
+            break;
+        case EACCES:
+            fprintf(stderr, "cd: permission denied: %s\n", path);
+            break;
+        default:
+            perror("chdir");
+            break;
+        }
     };
 };
 
