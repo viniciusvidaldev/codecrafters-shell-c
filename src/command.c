@@ -26,11 +26,15 @@ void cmd_pwd(String_View args) {
     printf("%s\n", cwd);
 };
 
+void cmd_cd(String_View args) {
+    char cwd[PATH_MAX];
+    if (chdir(sv_to_cstr(args)) != 0) {
+        perror("chdir");
+    };
+};
+
 static const Command commands[] = {
-    {"exit", cmd_exit},
-    {"echo", cmd_echo},
-    {"type", cmd_type},
-    {"pwd", cmd_pwd},
+    {"exit", cmd_exit}, {"echo", cmd_echo}, {"type", cmd_type}, {"pwd", cmd_pwd}, {"cd", cmd_cd},
 };
 
 static const size_t commands_len = sizeof(commands) / sizeof(commands[0]);
