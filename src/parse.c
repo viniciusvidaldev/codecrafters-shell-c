@@ -12,22 +12,14 @@ size_t parse_args(const char *input, char *storage, char **argv) {
     for (const char *p = input; *p != '\0'; p++) {
         char c = *p;
 
-        if (c == '\'') {
+        if (c == '\'' && !in_double_quotes) {
             in_single_quotes = !in_single_quotes;
             continue;
         }
 
-        if (c == '"') {
+        if (c == '"' && !in_single_quotes) {
             in_double_quotes = !in_double_quotes;
             continue;
-        }
-
-        if (c == '\\') {
-            char next_c = c++;
-            if (next_c == '\'' || next_c == '\"') {
-                storage[storage_offset + token_len++] = next_c;
-                continue;
-            }
         }
 
         bool in_quotes = in_single_quotes || in_double_quotes;
