@@ -30,9 +30,9 @@ void cmd_pwd(String_View args) {
 void cmd_cd(String_View args) {
     const char *path;
 
-    if (args.len == 0) {
-        const char *home_env = getenv("HOME");
-        if (home_env == NULL) {
+    if (args.len == 0 || sv_eq(args, sv_from("~"))) {
+        path = getenv("HOME");
+        if (path == NULL) {
             fprintf(stderr, "cd: HOME not set\n");
         }
     } else {
