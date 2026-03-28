@@ -1,6 +1,7 @@
 #include "string_view.h"
 #include <stdbool.h>
 #include <stdlib.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
 #define PATH_SEP ':'
