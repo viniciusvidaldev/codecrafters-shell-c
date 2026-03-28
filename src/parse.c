@@ -22,6 +22,14 @@ size_t parse_args(const char *input, char *storage, char **argv) {
             continue;
         }
 
+        if (c == '\\') {
+            char next_c = c++;
+            if (next_c == '\'' || next_c == '\"') {
+                storage[storage_offset + token_len++] = c;
+                continue;
+            }
+        }
+
         bool in_quotes = in_single_quotes || in_double_quotes;
 
         if (in_quotes || !isspace(c)) {
