@@ -3,6 +3,7 @@
 
 #include "command.h"
 
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -27,10 +28,17 @@ int main(int argc, char *argv[]) {
         }
         buf[strcspn(buf, "\n")] = '\0';
 
-        String_View args = sv_from(buf);
-        String_View cmd = sv_chop_by_delim(&args, ' ');
+        String_View input = sv_from(buf);
 
-        command_dispatch(cmd, args);
+        char *argv[ARG_MAX];
+        size_t argc = 0;
+        while (input.len > 0) {
+            sv_trim(&input);
+            String_View token = sv_chop_by_delim(&input, ' ');
+            argv[argc++] = sv_to_cstr(token);
+        }
+
+        command_dispatch(argv, argc);
     }
 
     return 0;

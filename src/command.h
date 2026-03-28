@@ -4,9 +4,9 @@
 
 typedef struct {
     const char *name;
-    void (*handler)(String_View args);
+    void (*handler)(char **argv, int argc);
 } Command;
 
-void command_dispatch(String_View cmd, String_View args);
+void command_dispatch(char **argv, int argc);
 
 #endif // COMMAND_H
