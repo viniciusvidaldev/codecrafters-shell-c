@@ -3,21 +3,6 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-typedef struct {
-    char *base;
-    char *ptr;
-    char *end;
-} Arena;
-
-void *arena_alloc(Arena *a, size_t size) {
-    assert(a->ptr + size <= a->end);
-    void *p = a->ptr;
-    a->ptr += size;
-    return p;
-}
-
-void arena_reset(Arena *a) { a->ptr = a->base; }
-
 size_t parse_args(const char *input, char *storage, char **argv) {
     size_t argc = 0;
     char *out = storage;
